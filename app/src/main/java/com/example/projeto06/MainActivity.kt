@@ -13,12 +13,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.projeto06.ui.theme.Projeto06Theme
 import com.example.projeto06.views.HeroListScreen
+import com.example.projeto06.views.HeroVMFactory
 import com.example.projeto06.views.HeroesViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val viewModel by viewModels<HeroesViewModel>()
+        val viewModel by viewModels<HeroesViewModel>(){
+            HeroVMFactory(
+                (this.applicationContext as DotaHeroesApplication).repository
+            )
+        }
         setContent {
             Projeto06Theme {
                 // A surface container using the 'background' color from the theme

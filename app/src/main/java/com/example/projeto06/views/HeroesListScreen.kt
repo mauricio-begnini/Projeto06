@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
@@ -34,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.projeto06.R
-import com.example.projeto06.data.Hero
+import com.example.projeto06.data.domain.Hero
 
 private const val BASE_URL = "https://api.opendota.com"
 
@@ -42,7 +41,7 @@ private const val BASE_URL = "https://api.opendota.com"
 fun HeroListScreen(
     heroesViewModel: HeroesViewModel
 ) {
-    val heroesList by heroesViewModel.heroList.observeAsState(listOf())
+    val heroesList by heroesViewModel.heroes.observeAsState(listOf())
     HeroList(heroList = heroesList)
 }
 

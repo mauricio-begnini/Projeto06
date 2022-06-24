@@ -1,6 +1,6 @@
-package com.example.projeto06.network
+package com.example.projeto06.data.source
 
-import com.example.projeto06.data.Hero
+import com.example.projeto06.data.domain.Hero
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
@@ -20,7 +20,7 @@ private val retrofit = Retrofit.Builder()
 
 interface OpenDotaApiService {
     @GET("api/heroStats")
-    suspend fun getHeroes(): List<Hero>
+    suspend fun getHeroes(): List<SourceHero>
 }
 
 object OpenDotaApi {

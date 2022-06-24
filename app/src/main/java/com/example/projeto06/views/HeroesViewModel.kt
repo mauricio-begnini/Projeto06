@@ -1,33 +1,48 @@
 package com.example.projeto06.views
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.projeto06.data.Hero
-import com.example.projeto06.network.OpenDotaApi
+import androidx.lifecycle.*
+import com.example.projeto06.data.domain.Hero
+import com.example.projeto06.data.repository.HeroRepository
+import com.example.projeto06.data.source.OpenDotaApi
 import kotlinx.coroutines.launch
+import java.io.IOException
+import java.lang.IllegalArgumentException
 
-class HeroesViewModel : ViewModel() {
-
-    private val _heroList = MutableLiveData<List<Hero>>()
-    val heroList: LiveData<List<Hero>>
-        get() = _heroList
+class HeroesViewModel(private val repository: HeroRepository) : ViewModel() {
 
     init {
-        getHeroes()
+        if(repository.heroes.value.isNullOrEmpty()){
+            refreshDataFromRepository()
+        }
     }
 
-    private fun getHeroes(){
+    val heroes = repository.heroes
+
+    private val _eventNetworkError = MutableLiveData<String>("")
+
+    private fun refreshDataFromRepository(){
         viewModelScope.launch {
             try {
-                val listResult = OpenDotaApi.retrofitService.getHeroes()
-                _heroList.value = listResult
-            }catch (e: Exception){
-                _heroList.value = null
-                Log.d("GetHeroes","${e.message}")
+                repository.refreshHeroes()
+                _eventNetworkError.value = ""
+            }catch (networkError: IOException){
+                Log.d("Error", "${networkError.message}")
+                _eventNetworkError.value = networkError.message
             }
         }
+
+
+    }
+
+
+
+}
+
+class HeroVMFactory(private val repository: HeroRepository) : ViewModelProvider.Factory{
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if(modelClass.isAssignableFrom(HeroesViewModel::class.java))
+            return HeroesViewModel(repository) as T
+        throw IllegalArgumentException("Unknown ViewModel Class")
     }
 }
